@@ -17,7 +17,7 @@ try:
      print("The number is even.")
   else:
      print("Your number is odd.")
-  print(even["ad"]+" (Sorry we can't remove the ads D:)")
+  print(even["ad"]+"\nDeveloper's note: Sorry we can't remove the ads :(")
 except KeyError:
    print("Enter a NUMBER!")
 except SyntaxError:
