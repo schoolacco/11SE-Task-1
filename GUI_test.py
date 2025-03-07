@@ -8,6 +8,7 @@ root.geometry("300x300+120+50")
 Label(root, text="Cool example text here.", bg="dark grey").pack()
 n = 1
 subroot = None
+var = StringVar()
 def Example_Command():
   global n
   print([(i*i) for i in range(n)])
@@ -36,4 +37,5 @@ def New_GUI(root):
 Button(root, text="Example Button", bg="aquamarine", command=Example_Command).pack()
 Button(root, text="Open another GUI", bg="light blue", command=lambda: New_GUI(subroot)).pack()
 Button(root, text="Quit :(", fg='crimson', bg="blue", command=lambda: destroy(root, subroot)).pack()
+OptionMenu(root, var, *[i*i for i in range(100)]).pack()
 root.mainloop()
