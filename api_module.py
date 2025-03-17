@@ -3,6 +3,7 @@ import webbrowser
 import webview
 # NASA API Base URL
 APOD_URL = "https://api.nasa.gov/planetary/apod"
+EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
 API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
 # Dictionary to store favorite celestial objects
 favorites = {}
@@ -23,9 +24,6 @@ class apod:
       else:
           print("Failed to fetch APOD.")
           return None
-  def add_favorite(name, details):
-      """Store a celestial object in the favorites collection."""
-      favorites[name] = details
   def open_image(date):
     try:
         params = {"api_key": API_KEY, "date": date} #The parameters of the APOD, including the API key and the date retrived
@@ -45,4 +43,20 @@ class apod:
             data = response.json()
             return webbrowser.open(data["url"])
     except NameError:
+       pass
+class Earth:
+     def get_image(lat, lon, dim, date):
+      """Fetch an Earth pciture."""
+      try:
+        params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
+        response = requests.get(EARTH_URL, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            window = webview.create_window(date["date"], data["url"]) #Opens the image url in a GUI with the title of the image
+            webview.start() #Open the GUI
+            return window
+        else:
+            print("Failed to fetch requested image.")
+            return None
+      except NameError:
        pass
