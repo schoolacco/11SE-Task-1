@@ -45,7 +45,7 @@ class apod:
     except NameError:
        pass
 class Earth:
-     def get_image(lat, lon, dim, date):
+     def open_image(lat, lon, dim, date):
       """Fetch an Earth pciture."""
       try:
         params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
