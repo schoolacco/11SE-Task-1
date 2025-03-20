@@ -4,7 +4,6 @@ import webview
 # NASA API Base URL
 APOD_URL = "https://api.nasa.gov/planetary/apod"
 EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
-ROVER_URL = "https://api.nasa.gov/neo/rest/v1"
 API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
 # Dictionary to store favorite celestial objects
 favorites = {}
