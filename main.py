@@ -3,11 +3,8 @@ from tkinter import *
 from tkinter import ttk
 from api_module import Earth
 def explanation(date):
-    root = Tk()
-    root.title(apod.get_apod(date)["title"])
-    root.configure(bg="black")
-    root.minsize(200,200)
-    Message(root, text=apod.return_explanation(date), bg="black", fg="white").pack()
+  global txt
+  txt.insert(1.0, apod.return_explanation(date))
 root = Tk()
 root.title('NASA API')
 root.configure(bg='black')
@@ -28,6 +25,9 @@ date_input = Entry(Apod_frame, bg="black", fg="white")
 date_input.pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
 Button(Apod_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
+Label(Apod_frame, text="\n", bg="black", fg="white").pack()
+txt = Text(Apod_frame, bg = "black", fg= "white")
+txt.pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
 bg = PhotoImage(file="stars.png") 
 canvas = Canvas(Apod_frame, width=800, height=800)
