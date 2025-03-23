@@ -26,7 +26,7 @@ date_input.pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
 Button(Apod_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-txt = Text(Apod_frame, bg = "black", fg= "white")
+txt = Text(Apod_frame, bg = "black", fg= "white", width=101, height=10)
 txt.pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
 bg = PhotoImage(file="stars.png") 
@@ -34,6 +34,10 @@ canvas = Canvas(Apod_frame, width=800, height=800)
 canvas.pack()
 canvas.create_image( 0, 0, image = bg,  
                      anchor = "nw") 
+scroll_bar = Scrollbar(Apod_frame) 
+  
+scroll_bar.pack( side = RIGHT, 
+                fill = Y ) 
 Apod_frame.pack(fill='both', expand=True)
 notebook.add(Apod_frame, text="APOD")
 # ------------ EARTH IMAGES ----------------
