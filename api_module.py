@@ -33,6 +33,8 @@ class apod:
             window = webview.create_window(data["title"], data["url"]) #Opens the image url in a GUI with the title of the image
             webview.start() #Open the GUI
             return window
+        else:
+           print("Failed to fetch APOD")
     except NameError:
        pass #For invalid inputs
   def open_url(date):
