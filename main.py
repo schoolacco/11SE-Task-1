@@ -1,10 +1,23 @@
-from api_module import apod
+from api_module import apod, Earth
 from tkinter import *
 from tkinter import ttk
-from api_module import Earth
+from tkinterweb import *
 def explanation(date):
   global txt
-  txt.insert(1.0, apod.return_explanation(date))
+  try:
+    txt.insert(1.0, apod.return_explanation(date))
+  except TclError:
+    pass #For invalid inputs
+def display(date):
+  global frame, canvas
+  try:
+    apod.get_apod(date)["image_url"] #A buffer to instantly cause an error in the case of an invalid input, I have tried turning it into a variable but it doesn't function as intended
+    frame.destroy()
+    frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False)
+    frame.load_website(apod.get_apod(date)["image_url"])
+    frame.pack(fill="both", expand=True)
+  except TypeError:
+    pass #For invalid inputs
 root = Tk()
 root.title('NASA API')
 root.configure(bg='black')
@@ -16,7 +29,7 @@ s.configure('Apod_frame.TFrame', background="black")
 Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
 Label(Apod_frame, text="Welcome to this system", bg="black", fg="white").pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: apod.open_image(date_input.get())).pack()
+Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: display(date_input.get())).pack()
 Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
 Button(Apod_frame, text="Read APOD explanation", bg="black", fg="white", command=lambda: explanation(date_input.get())).pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
@@ -29,15 +42,14 @@ Label(Apod_frame, text="\n", bg="black", fg="white").pack()
 txt = Text(Apod_frame, bg = "black", fg= "white", width=101, height=10)
 txt.pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-bg = PhotoImage(file="stars.png") 
 canvas = Canvas(Apod_frame, width=800, height=800)
+try:
+ frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False)
+ frame.load_website(apod.get_apod(date_input.get())["image_url"])
+ frame.pack(fill="both", expand=True)
+except TypeError:
+  raise "API_KEY has been rate_limited, try again"
 canvas.pack()
-canvas.create_image( 0, 0, image = bg,  
-                     anchor = "nw") 
-scroll_bar = Scrollbar(Apod_frame) 
-  
-scroll_bar.pack( side = RIGHT, 
-                fill = Y ) 
 Apod_frame.pack(fill='both', expand=True)
 notebook.add(Apod_frame, text="APOD")
 # ------------ EARTH IMAGES ----------------

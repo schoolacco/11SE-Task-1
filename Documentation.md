@@ -12,7 +12,7 @@
 
 1. The user must be capable of obtaining the Astronomy Picture Of the Day and any related data including the title, date and explanation of what the picture is. They must be capable of retriving this data for any previous APOD dates.
 2. It should be able of accessing NASA's photos of Earth.
-(More would be done... but rate limits exist)
+(More would be done... but rate limits exist prohibiting use of a majority of the API's uses)
 
 ---
 
