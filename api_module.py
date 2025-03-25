@@ -5,7 +5,7 @@ import os
 # NASA API Base URL
 APOD_URL = "https://api.nasa.gov/planetary/apod"
 EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
-API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
+API_KEY = "qKn4WWrU3fuG9OuhcOOsGo7aFHvIfBC7XLqnqCpH"
 class apod:
   #running = False
   def get_apod(date):
@@ -15,16 +15,24 @@ class apod:
         response = requests.get(APOD_URL, params=params)
         if response.status_code == 200:
             data = response.json()
-            return {
+            try:
+             return {
                 "title": data["title"],
                 "date": data["date"],
                 "explanation": data["explanation"],
                 "image_url": data["url"]
-            }
+             }
+            except KeyError:
+               return {
+                "title": data["title"],
+                "date": data["date"],
+                "explanation": data["explanation"],
+               }
         else:
             os.system('cls')
             print("The API_Key has been temporarily rate limited, please try again soon")
             print("Or you entered an invalid input (remember that NASA is a day behind)")
+            return None
       except requests.exceptions.HTTPError as errh:
           return "An Http Error occurred:" + repr(errh)
       except requests.exceptions.ConnectionError as errc:
@@ -39,7 +47,10 @@ class apod:
         response = requests.get(APOD_URL, params=params)
         if response.status_code == 200:
             data = response.json()
-            return webbrowser.open(data["url"])
+            try:
+              return webbrowser.open(data["url"])
+            except KeyError:
+               return webbrowser.open("https://apod.nasa.gov/apod/astropix.html")
     except NameError:
        print("Unable to retrive Image URL, likely due to rate limits or the APOD does not exist")
        pass
