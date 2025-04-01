@@ -16,7 +16,7 @@ def display(date):
     frame.destroy() #Destroy the frame
     frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False) #Create the html frame, scrollable in the case the image is too large
     frame.load_website(apod.get_apod(date)["image_url"]) # Load the image
-    frame.pack(fill="both", expand=True)
+    frame.pack(fill="both", expand=True) # Add to frame
   except KeyError:
     frame.load_website("https://www.google.com/APOD_URL_Inaccessible") #This just causes an Error404 message to appear
     frame.pack(fill="both", expand=True)
