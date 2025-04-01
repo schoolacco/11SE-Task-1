@@ -7,4 +7,8 @@ Brief description of the project.
 Clone the repository and navigate to the project directory:
 .....
 
-type "pip install -r requirements.txt" to download required dependencies
+type "pip install -r requirements.txt" to download required dependencies and run main.py.
+If any errors are encountered manually download the modules.
+pip install pywebview
+pip install tkinterweb
+pip install requests
