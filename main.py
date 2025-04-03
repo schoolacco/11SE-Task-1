@@ -28,7 +28,8 @@ root = Tk() # GUI
 root.title('NASA API') #Title
 root.configure(bg='black') #bg color
 root.maxsize(1000,1000) # Maximum size
-root.minsize(1000,1000) # Minimum size
+root.minsize(500,500) # Minimum size
+root.geometry('500x500+120+100')
 notebook = ttk.Notebook(root) #This allows for creation of tabs
 s = ttk.Style() #This has to be a variable for whatever reason
 s.configure('Apod_frame.TFrame', background="black") #Change Style() to create bgs for frames
