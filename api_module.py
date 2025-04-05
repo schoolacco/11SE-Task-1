@@ -42,6 +42,7 @@ class apod:
       except requests.exceptions.RequestException as err:
           return "An Unknown Error occurred" + repr(err) #This error handling was taken from online
   def open_url(date):
+    """Open up the APOD's url in the user's default browser"""
     try:
         params = {"api_key": API_KEY, "date": date, "thumbs": True}
         response = requests.get(APOD_URL, params=params)
@@ -55,6 +56,7 @@ class apod:
        print("Unable to retrive Image URL, likely due to rate limits or the APOD does not exist")
        pass #Error handling
   def return_explanation(date):
+     """Specifically return the explanation of the APOD from the given date"""
      try:
         params = {"api_key": API_KEY, "date": date} #Taken from the get apod function
         response = requests.get(APOD_URL, params=params)
@@ -73,7 +75,7 @@ class apod:
          return "An Unknown Error occurred" + repr(err)
 class Earth:
      def open_image(lat, lon, dim, date):
-      """Fetch an Earth picture."""
+      """Fetch an Earth picture and open it in a GUI window with pywebview."""
       try:
         params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
         response = requests.get(EARTH_URL, params=params)
@@ -88,6 +90,7 @@ class Earth:
       except NameError:
        pass #Invalid inputs
      def open_url(lat, lon, dim, date):
+       """Same as APOD's open url but for earth images"""
        try:
            params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
            response = requests.get(EARTH_URL, params=params)

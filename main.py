@@ -3,6 +3,7 @@ from tkinter import * # Import everything
 from tkinter import ttk #Specifically import ttk (* doesn't import it)
 from tkinterweb import * # Import everything for better tkinterhtml
 def explanation(date):
+  """Insert the explanation for the APOD into a textbox"""
   global txt #Tkinter textbox is global
   try:
     txt.delete(1.0, END) #Remove text
@@ -11,6 +12,7 @@ def explanation(date):
     pass #For invalid inputs
 def display(date):
   global frame, canvas, txt
+  """Insert the the APOD into a html frame"""
   try:
     apod.get_apod(date)["image_url"] #A buffer to instantly cause an error in the case of an invalid input, I have tried turning it into a variable but it doesn't function as intended
     frame.destroy() #Destroy the frame
@@ -24,6 +26,7 @@ def display(date):
     txt.insert(1.0, "There was an error with accessing the APOD, it likely uses a video without a thumbnail.") #Error message
   except TypeError:
     pass # Handle invalid inputs
+"""Setting up the GUI"""
 root = Tk() # GUI
 root.title('NASA API') #Title
 root.configure(bg='black') #bg color
@@ -33,6 +36,7 @@ root.geometry('500x500+120+100')
 notebook = ttk.Notebook(root) #This allows for creation of tabs
 s = ttk.Style() #This has to be a variable for whatever reason
 s.configure('Apod_frame.TFrame', background="black") #Change Style() to create bgs for frames
+"""Set up the APOD tab"""
 Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame') #Create a tab in the notebook
 Label(Apod_frame, text="Welcome to this system \n Just know that if anything is ever blank it is due to rate limits from NASA", bg="black", fg="white").pack() #Intro text
 Label(Apod_frame, text="\n", bg="black", fg="white").pack() #Add space
@@ -66,7 +70,7 @@ except TypeError:
 canvas.pack()
 Apod_frame.pack(fill='both', expand=True)
 notebook.add(Apod_frame, text="APOD") # Adds the frame to the notebook
-# ------------ EARTH IMAGES ----------------
+"""--------EARTH IMAGES--------"""
 Earth_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
 Label(Earth_frame, text="WARNING: THERE IS AN INCREDIBLY HIGH CHANCE THIS WILL FAIL AS THE API IS VERY LIMITED IN THIS REGARD", bg="black", fg="crimson").pack() # A warning
 Label(Earth_frame, text="\n", bg="black", fg="white").pack()
