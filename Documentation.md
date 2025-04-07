@@ -358,116 +358,10 @@ So far it fills the basic functions set, it can access the current APOD and that
 ---
 ---
 
-```Python
-import requests
-import webbrowser
-import webview
-import os
-# NASA API Base URL
-APOD_URL = "https://api.nasa.gov/planetary/apod"
-EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
-API_KEY = "qKn4WWrU3fuG9OuhcOOsGo7aFHvIfBC7XLqnqCpH"
-class apod:
-  #running = False
-  def get_apod(date):
-      """Fetch NASA's Astronomy Picture of the Day (APOD)."""
-      try:
-        params = {"api_key": API_KEY, "date": date, "thumbs": True} # nessecary parameters
-        response = requests.get(APOD_URL, params=params) # Refers to the APOD
-        if response.status_code == 200: #If it gets a response
-            data = response.json()
-            try: # Usual scenario
-             return {
-                "title": data["title"],
-                "date": data["date"],
-                "explanation": data["explanation"],
-                "image_url": data["url"]
-             }
-            except KeyError: #For if there is no image url
-               return {
-                "title": data["title"],
-                "date": data["date"],
-                "explanation": data["explanation"],
-               }
-        else:
-            os.system('cls')
-            print("The API_Key has been temporarily rate limited, please try again soon")
-            print("Or you entered an invalid input (remember that NASA is a day behind)")
-            return None #Explaining possible errors
-      except requests.exceptions.HTTPError as errh:
-          return "An Http Error occurred:" + repr(errh)
-      except requests.exceptions.ConnectionError as errc:
-          return "An Error Connecting to the API occurred:" + repr(errc)
-      except requests.exceptions.Timeout as errt:
-          return "A Timeout Error occurred:" + repr(errt)
-      except requests.exceptions.RequestException as err:
-          return "An Unknown Error occurred" + repr(err) #This error handling was taken from online
-  def open_url(date):
-    """Open up the APOD's url in the user's default browser"""
-    try:
-        params = {"api_key": API_KEY, "date": date, "thumbs": True}
-        response = requests.get(APOD_URL, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            try:
-              return webbrowser.open(data["url"]) #This opens to the image
-            except KeyError:
-               return webbrowser.open("https://apod.nasa.gov/apod/astropix.html") # In the case that there is no image link it opens directly towards the current APOD
-    except NameError:
-       raise requests.exceptions.ConnectionError
-       pass #Error handling
-  def return_explanation(date):
-     """Specifically return the explanation of the APOD from the given date"""
-     try:
-        params = {"api_key": API_KEY, "date": date} #Taken from the get apod function
-        response = requests.get(APOD_URL, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            return data["explanation"]
-     except NameError:
-       return "Unable to retrieve explanation"
-     except requests.exceptions.HTTPError as errh:
-          return "An Http Error occurred:" + repr(errh)
-     except requests.exceptions.ConnectionError as errc:
-         return "An Error Connecting to the API occurred:" + repr(errc)
-     except requests.exceptions.Timeout as errt:
-         return "A Timeout Error occurred:" + repr(errt)
-     except requests.exceptions.RequestException as err:
-         return "An Unknown Error occurred" + repr(err)
-class Earth:
-     def open_image(lat, lon, dim, date):
-      """Fetch an Earth picture and open it in a GUI window with pywebview."""
-      try:
-        params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-        response = requests.get(EARTH_URL, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            window = webview.create_window(data["date"], data["url"]) #Opens the image url in a GUI with the title of the image
-            webview.start() #Open the GUI
-            return window
-        else:
-            print("Failed to fetch requested image.") #Error handling
-            return None
-      except NameError:
-       pass #Invalid inputs
-     def open_url(lat, lon, dim, date):
-       """Same as APOD's open url but for earth images"""
-       try:
-           params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-           response = requests.get(EARTH_URL, params=params)
-           if response.status_code == 200:
-               data = response.json()
-               return webbrowser.open(data["url"])
-       except NameError:
-          raise requests.exceptions.ConnectionError
-          pass   
-```
+![APOD](ss.png)
+![Earth](ss3.png)
 
-### Main
-
-```Python
-from api_module import apod, Earth #Importing from my module
-```
+As seen in the above screenshots the API has successfully been integrated into the program with it accessing both the APOD service and Earth images service without issue. So far it is entirely functional with basic error handling and with it successfully fufilling all the functional and non-functional requirements, from this point the only things required are minor changes that do not intervene much with the functionality of the program itself.
 
 ---
 ---
@@ -1004,3 +898,9 @@ pip install pywebview
 ---
 
 Here we are. I feel as if the program meets all the initial requirements I set up for it, accessing multiple libraries that can be reasonably used without requiring a superior API key. It uses a tkinter GUI as intended and the GUI's buttons meet the rest of the functional requirements I set up to meet. The program has also met all non-functional requirements I initially set up for it (given it isn't ratelimited) hence I believe that the program is fully functional having met all requirements I set it up for. There are many ways the program may be improved, for instance a way to store the APODs within the program (the major reason I didn't do this was that it had already been done) via some kind of image loading software that is compatible with tkinter, in theory it could be improved such that it can use a majority of NASA's services, however that would require an API key with higher rate limits such a thing can only be accessed by contacting NASA and giving a valid reason. Beyond this can also be some miscellaneous features added such as accessing an APOD from a random date (which is actually quite easy) and possibly some kind of feedback system. Assuming in accordance with the waterfall structure it was developed terribly, having the code done before any level of documention, but in the end it has worked well, the documentaton has been completed, the code is functional and effective, there is nothing wrong with the final product but the time management in accordance with the waterfall structure would be terrible everything being completed entirely out of order. Throughout the project many challenges were faced, most notably the school wifi rate limiting everything for quite literally no reason (I would've done more if it weren't for that >:[) which simply made testing and debugging overly difficult for no particular reason. Other challenges include things such as attempting to insert html into tkinter, but the largest issue by far will likely remain the rate limits which cannot be fixed.
+
+---
+---
+---
+
+## **I don't like rate limits >:(**
