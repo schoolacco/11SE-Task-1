@@ -1,6 +1,9 @@
 import requests
 import webbrowser
 import webview
+import urllib.request
+import os
+import shutil
 # NASA API Base URL
 APOD_URL = "https://api.nasa.gov/planetary/apod"
 EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
@@ -68,6 +71,26 @@ class apod:
          return "A Timeout Error occurred:" + repr(errt)
      except requests.exceptions.RequestException as err:
          return "An Unknown Error occurred" + repr(err)
+  def save_APOD(date):
+    try:
+        params = {"api_key": API_KEY, "date": date} #Taken from the get apod function
+        response = requests.get(APOD_URL, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            urllib.request.urlretrieve(data["image_url"], data["title"])
+            if not os.path.exists("Images"):
+                os.makedirs("Images")
+            file_name = os.path.basename(f"{data["title"]}.png")
+    except NameError:
+      return "Unable to retrieve image"
+    except requests.exceptions.HTTPError as errh:
+         return "An Http Error occurred:" + repr(errh)
+    except requests.exceptions.ConnectionError as errc:
+        return "An Error Connecting to the API occurred:" + repr(errc)
+    except requests.exceptions.Timeout as errt:
+        return "A Timeout Error occurred:" + repr(errt)
+    except requests.exceptions.RequestException as err:
+        return "An Unknown Error occurred" + repr(err)
 class Earth:
      def open_image(lat, lon, dim, date):
       """Fetch an Earth picture and open it in a GUI window with pywebview."""
