@@ -1,11 +1,10 @@
 import requests
 import webbrowser
 import webview
-import os
 # NASA API Base URL
 APOD_URL = "https://api.nasa.gov/planetary/apod"
 EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
-API_KEY = "qKn4WWrU3fuG9OuhcOOsGo7aFHvIfBC7XLqnqCpH"
+API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
 class apod:
   #running = False
   def get_apod(date):
@@ -29,10 +28,7 @@ class apod:
                 "explanation": data["explanation"],
                }
         else:
-            os.system('cls')
-            print("The API_Key has been temporarily rate limited, please try again soon")
-            print("Or you entered an invalid input (remember that NASA is a day behind)")
-            return None #Explaining possible errors
+            pass
       except requests.exceptions.HTTPError as errh:
           return "An Http Error occurred:" + repr(errh)
       except requests.exceptions.ConnectionError as errc:
@@ -53,8 +49,7 @@ class apod:
             except KeyError:
                return webbrowser.open("https://apod.nasa.gov/apod/astropix.html") # In the case that there is no image link it opens directly towards the current APOD
     except NameError:
-       print("Unable to retrive Image URL, likely due to rate limits or the APOD does not exist")
-       pass #Error handling
+       pass
   def return_explanation(date):
      """Specifically return the explanation of the APOD from the given date"""
      try:
@@ -85,8 +80,7 @@ class Earth:
             webview.start() #Open the GUI
             return window
         else:
-            print("Failed to fetch requested image.") #Error handling
-            return None
+            pass
       except NameError:
        pass #Invalid inputs
      def open_url(lat, lon, dim, date):
@@ -98,5 +92,4 @@ class Earth:
                data = response.json()
                return webbrowser.open(data["url"])
        except NameError:
-          print("Unable to access image URL")
-          pass   
+          pass

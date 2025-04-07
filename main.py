@@ -14,7 +14,6 @@ def display(date):
   global frame, canvas, txt
   """Insert the the APOD into a html frame"""
   try:
-    apod.get_apod(date)["image_url"] #A buffer to instantly cause an error in the case of an invalid input, I have tried turning it into a variable but it doesn't function as intended
     frame.destroy() #Destroy the frame
     frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False) #Create the html frame, scrollable in the case the image is too large
     frame.load_website(apod.get_apod(date)["image_url"]) # Load the image
@@ -38,7 +37,7 @@ s = ttk.Style() #This has to be a variable for whatever reason
 s.configure('Apod_frame.TFrame', background="black") #Change Style() to create bgs for frames
 """Set up the APOD tab"""
 Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame') #Create a tab in the notebook
-Label(Apod_frame, text="Welcome to this system \n Just know that if anything is ever blank it is due to rate limits from NASA", bg="black", fg="white").pack() #Intro text
+Label(Apod_frame, text="Welcome to this system \n Just know that if anything is ever blank it is due to rate limits from NASA \n These rate limits may have been caused by the school Wifi somehow...", bg="black", fg="white").pack() #Intro text
 Label(Apod_frame, text="\n", bg="black", fg="white").pack() #Add space
 Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: display(date_input.get())).pack() #Apod commands
 Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
@@ -73,6 +72,7 @@ notebook.add(Apod_frame, text="APOD") # Adds the frame to the notebook
 """--------EARTH IMAGES--------"""
 Earth_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
 Label(Earth_frame, text="WARNING: THERE IS AN INCREDIBLY HIGH CHANCE THIS WILL FAIL AS THE API IS VERY LIMITED IN THIS REGARD", bg="black", fg="crimson").pack() # A warning
+Label(Earth_frame, text="Do: lon: -95.33, lat: 29.78, date: 2018-01-01, dim: 0.15 if you want evidence of this functioning", bg = "black", fg="white").pack()
 Label(Earth_frame, text="\n", bg="black", fg="white").pack()
 Button(Earth_frame, text="Open Image", bg="black", fg="white", command=lambda: Earth.open_image(lat.get(), lon.get(), dim.get(), date_input2.get())).pack() # Refer to the corresponding functions and the buttons in the APOD section for explanation
 Button(Earth_frame, text="Open the Image url", bg="black", fg="white", command=lambda: Earth.open_url(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
@@ -97,8 +97,11 @@ bg2 = PhotoImage(file="Earth.png") # A nice placeholder image
 canvas2 = Canvas(Earth_frame, width=750, height=750)
 canvas2.pack()
 canvas2.create_image( 0, 0, image = bg2, anchor="nw")  # Add image
-
 Earth_frame.pack(fill='both', expand=True)
 notebook.add(Earth_frame, text="Earth Imagery") # Add the frame to the notebook
+'''-----Help-----'''
+Help = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
+Message(Help, text="Are you confused by all of this? It honestly isn't too hard to understand. Enter in the date input within the APOD frame in the given format to recieve the APOD of that given date, do not that you may run into some issues, these likely relate to the APOD being a video instead of an image or you simply being rate limited. If you want today's APOD just leave it blank. The Open Image buttons in either frame will simply open up the image within the GUI,  the open the image URL buttons will open the image within your default browser. The APOD explanation button with the APOD frame will simply insert the explanation (given by NASA) of the APOD of the date you chose. In the Earth frame the latitude and longtitude entry points are as you'd expect them to be, latitude and longtitude of the Earth image, the dimensions parameter is rather unclear but doesn't matter too much. If you run into any issues first ensure that you have gone through the README and make sure you aren't just rate limited, otherwise, report the issue.", bg="black", fg="white").pack() # A warning
+notebook.add(Help, text="Help") # Add the frame to the notebook
 notebook.pack(expand=True)
 root.mainloop()

@@ -300,7 +300,7 @@ END apod.return_explanation(date)
 |date|DateTime|YYYY/MM/DD|10|10|The date parameter for the API, is the current date by default|2020/03/05|Follows YYYY/MM/DD format|
 |lat|float|NN.NN|4|2|The latitude parameter for the API, it is an earth latitude coordinate|23.205|Is a number with a decimal place|
 |lon|float|NN.NN|4|2|The longitude parameter for the API, it is an earth longitude coordinate|23.205|Is a number with a decimal place|
-|dim|float|N.N|4|2|The dimensions parameter for the API, it is the dimensions of the image|1.5|Is a number with a only one decimal place|
+|dim|float|N.NN|4|2|The dimensions parameter for the API, it is the dimensions of the image|1.5|Is a number with a only two decimal places|
 
 ---
 ---
@@ -310,7 +310,7 @@ END apod.return_explanation(date)
 ---
 ---
 
-### Example 1
+### Basis
 
 ---
 
@@ -343,317 +343,12 @@ root.mainloop()
 
 ```
 
----
+![GUI](GUI.png)
+![ss](ss2.png)
 
-### Example 2
+### Evaluation
 
----
-
-```Python
-from api_module import apod, Earth
-from tkinter import *
-from tkinter import ttk
-from tkinterweb import *
-def explanation(date):
-  global txt
-  try:
-    txt.insert(1.0, apod.return_explanation(date))
-  except TclError:
-    pass #For invalid inputs
-def display(date):
-  global frame, canvas
-  try:
-    apod.get_apod(date)["image_url"] #A buffer to instantly cause an error in the case of an invalid input, I have tried turning it into a variable but it doesn't function as intended
-    frame.destroy()
-    frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False)
-    frame.load_website(apod.get_apod(date)["image_url"])
-    frame.pack(fill="both", expand=True)
-  except TypeError:
-    pass #For invalid inputs
-root = Tk()
-root.title('NASA API')
-root.configure(bg='black')
-root.maxsize(1000,1000)
-root.minsize(1000,1000)
-notebook = ttk.Notebook(root)
-s = ttk.Style()
-s.configure('Apod_frame.TFrame', background="black")
-Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
-Label(Apod_frame, text="Welcome to this system", bg="black", fg="white").pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: display(date_input.get())).pack()
-Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
-Button(Apod_frame, text="Read APOD explanation", bg="black", fg="white", command=lambda: explanation(date_input.get())).pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-Label(Apod_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
-date_input = Entry(Apod_frame, bg="black", fg="white")
-date_input.pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-Button(Apod_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-txt = Text(Apod_frame, bg = "black", fg= "white", width=101, height=10)
-txt.pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-canvas = Canvas(Apod_frame, width=800, height=800)
-frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False)
-frame.load_website(apod.get_apod(date_input.get())["image_url"])
-frame.pack(fill="both", expand=True)
-canvas.pack()
-Apod_frame.pack(fill='both', expand=True)
-notebook.add(Apod_frame, text="APOD")
-# ------------ EARTH IMAGES ----------------
-Earth_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
-Label(Earth_frame, text="WARNING: THERE IS AN INCREDIBLY HIGH CHANCE THIS WILL FAIL AS THE API IS VERY LIMITED IN THIS REGARD", bg="black", fg="crimson").pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Button(Earth_frame, text="Open Image", bg="black", fg="white", command=lambda: Earth.open_image(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
-Button(Earth_frame, text="Open the Image url", bg="black", fg="white", command=lambda: Earth.open_url(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Label(Earth_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
-date_input2 = Entry(Earth_frame, bg="black", fg="white")
-date_input2.pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Label(Earth_frame, text="Enter in the latitude of the image", bg="black", fg="white").pack()
-lat = Entry(Earth_frame, bg="black", fg="white")
-lat.pack()
-Label(Earth_frame, text="Enter in the longtitude of the image", bg="black", fg="white").pack()
-lon = Entry(Earth_frame, bg="black", fg="white")
-lon.pack()
-Label(Earth_frame, text="Enter in the dimensions of the image (only one number)", bg="black", fg="white").pack()
-dim = Entry(Earth_frame, bg="black", fg="white")
-dim.pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Button(Earth_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-bg2 = PhotoImage(file="Earth.png") 
-canvas2 = Canvas(Earth_frame, width=750, height=750)
-canvas2.pack()
-canvas2.create_image( 0, 0, image = bg2, anchor="nw") 
-
-Earth_frame.pack(fill='both', expand=True)
-notebook.add(Earth_frame, text="Earth Imagery")
-notebook.pack(expand=True)
-root.mainloop()
-```
-
----
-
-### Final
-
----
-
-```Python
-from api_module import apod, Earth #Importing from my module
-from tkinter import * # Import everything
-from tkinter import ttk #Specifically import ttk (* doesn't import it)
-from tkinterweb import * # Import everything for better tkinterhtml
-def explanation(date):
-  """Insert the explanation for the APOD into a textbox"""
-  global txt #Tkinter textbox is global
-  try:
-    txt.delete(1.0, END) #Remove text
-    txt.insert(1.0, apod.return_explanation(date)) # Fill it with explanation
-  except TclError:
-    pass #For invalid inputs
-def display(date):
-  global frame, canvas, txt
-  """Insert the the APOD into a html frame"""
-  try:
-    apod.get_apod(date)["image_url"] #A buffer to instantly cause an error in the case of an invalid input, I have tried turning it into a variable but it doesn't function as intended
-    frame.destroy() #Destroy the frame
-    frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False) #Create the html frame, scrollable in the case the image is too large
-    frame.load_website(apod.get_apod(date)["image_url"]) # Load the image
-    frame.pack(fill="both", expand=True) # Add to frame
-  except KeyError:
-    frame.load_website("https://www.google.com/APOD_URL_Inaccessible") #This just causes an Error404 message to appear
-    frame.pack(fill="both", expand=True)
-    txt.delete(1.0,END) # Remove text
-    txt.insert(1.0, "There was an error with accessing the APOD, it likely uses a video without a thumbnail.") #Error message
-  except TypeError:
-    pass # Handle invalid inputs
-"""Setting up the GUI"""
-root = Tk() # GUI
-root.title('NASA API') #Title
-root.configure(bg='black') #bg color
-root.maxsize(1000,1000) # Maximum size
-root.minsize(500,500) # Minimum size
-root.geometry('500x500+120+100')
-notebook = ttk.Notebook(root) #This allows for creation of tabs
-s = ttk.Style() #This has to be a variable for whatever reason
-s.configure('Apod_frame.TFrame', background="black") #Change Style() to create bgs for frames
-"""Set up the APOD tab"""
-Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame') #Create a tab in the notebook
-Label(Apod_frame, text="Welcome to this system \n Just know that if anything is ever blank it is due to rate limits from NASA", bg="black", fg="white").pack() #Intro text
-Label(Apod_frame, text="\n", bg="black", fg="white").pack() #Add space
-Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: display(date_input.get())).pack() #Apod commands
-Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
-Button(Apod_frame, text="Read APOD explanation", bg="black", fg="white", command=lambda: explanation(date_input.get())).pack() # Refer to the respective functions, lambda is required to allow for the functions to require variables and cause them to not run instantly
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-Label(Apod_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack() # An explanation of the nessecary format
-date_input = Entry(Apod_frame, bg="black", fg="white") # Allows for an input within the GUI
-date_input.pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-Button(Apod_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack() # A button to end the program
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-txt = Text(Apod_frame, bg = "black", fg= "white", width=101, height=10) # This creates a text box which can be edited by the user or have things inserted into it
-txt.pack()
-Label(Apod_frame, text="\n", bg="black", fg="white").pack()
-canvas = Canvas(Apod_frame, width=800, height=800) # This just creates a border for the image
-frame = HtmlFrame(canvas, horizontal_scrollbar="auto", messages_enabled = False) # Creates a html frame
-try:
-  frame.load_website(apod.get_apod(date_input.get())["image_url"]) # It attempts to load the website, if it is a youtube video it will give a link to it instead
-except KeyError:
-   frame.load_website("https://www.google.com/APOD_URL_Inaccessible")
-   txt.delete(1.0,END)
-   txt.insert(1.0, "There was an error with accessing the APOD, it likely uses a video without a thumbnail.") # Error messages
-   frame.pack(fill="both", expand=True)
-except TypeError:
-   frame.load_website("https://www.google.com/APOD_URL_Inaccessible")
-   txt.delete(1.0,END)
-   txt.insert(1.0, "There was an error with accessing the APOD, it is likely due to rate limits") # Error messages
-   frame.pack(fill="both", expand=True)
-canvas.pack()
-Apod_frame.pack(fill='both', expand=True)
-notebook.add(Apod_frame, text="APOD") # Adds the frame to the notebook
-"""--------EARTH IMAGES--------"""
-Earth_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
-Label(Earth_frame, text="WARNING: THERE IS AN INCREDIBLY HIGH CHANCE THIS WILL FAIL AS THE API IS VERY LIMITED IN THIS REGARD", bg="black", fg="crimson").pack() # A warning
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Button(Earth_frame, text="Open Image", bg="black", fg="white", command=lambda: Earth.open_image(lat.get(), lon.get(), dim.get(), date_input2.get())).pack() # Refer to the corresponding functions and the buttons in the APOD section for explanation
-Button(Earth_frame, text="Open the Image url", bg="black", fg="white", command=lambda: Earth.open_url(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Label(Earth_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack() # Format
-date_input2 = Entry(Earth_frame, bg="black", fg="white") #Same as APOD section
-date_input2.pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Label(Earth_frame, text="Enter in the latitude of the image", bg="black", fg="white").pack() #Information on what to enter
-lat = Entry(Earth_frame, bg="black", fg="white")
-lat.pack()
-Label(Earth_frame, text="Enter in the longtitude of the image", bg="black", fg="white").pack() # Same as previous
-lon = Entry(Earth_frame, bg="black", fg="white")
-lon.pack()
-Label(Earth_frame, text="Enter in the dimensions of the image (only one number)", bg="black", fg="white").pack() # Same as previous
-dim = Entry(Earth_frame, bg="black", fg="white")
-dim.pack()
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-Button(Earth_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack() # End the program again
-Label(Earth_frame, text="\n", bg="black", fg="white").pack()
-bg2 = PhotoImage(file="Earth.png") # A nice placeholder image
-canvas2 = Canvas(Earth_frame, width=750, height=750)
-canvas2.pack()
-canvas2.create_image( 0, 0, image = bg2, anchor="nw")  # Add image
-
-Earth_frame.pack(fill='both', expand=True)
-notebook.add(Earth_frame, text="Earth Imagery") # Add the frame to the notebook
-notebook.pack(expand=True)
-root.mainloop()
-```
-
-### Final (Module)
-
-```Python
-import requests
-import webbrowser
-import webview
-import os
-# NASA API Base URL
-APOD_URL = "https://api.nasa.gov/planetary/apod"
-EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
-API_KEY = "qKn4WWrU3fuG9OuhcOOsGo7aFHvIfBC7XLqnqCpH"
-class apod:
-  #running = False
-  def get_apod(date):
-      """Fetch NASA's Astronomy Picture of the Day (APOD)."""
-      try:
-        params = {"api_key": API_KEY, "date": date, "thumbs": True} # nessecary parameters
-        response = requests.get(APOD_URL, params=params) # Refers to the APOD
-        if response.status_code == 200: #If it gets a response
-            data = response.json()
-            try: # Usual scenario
-             return {
-                "title": data["title"],
-                "date": data["date"],
-                "explanation": data["explanation"],
-                "image_url": data["url"]
-             }
-            except KeyError: #For if there is no image url
-               return {
-                "title": data["title"],
-                "date": data["date"],
-                "explanation": data["explanation"],
-               }
-        else:
-            os.system('cls')
-            print("The API_Key has been temporarily rate limited, please try again soon")
-            print("Or you entered an invalid input (remember that NASA is a day behind)")
-            return None #Explaining possible errors
-      except requests.exceptions.HTTPError as errh:
-          return "An Http Error occurred:" + repr(errh)
-      except requests.exceptions.ConnectionError as errc:
-          return "An Error Connecting to the API occurred:" + repr(errc)
-      except requests.exceptions.Timeout as errt:
-          return "A Timeout Error occurred:" + repr(errt)
-      except requests.exceptions.RequestException as err:
-          return "An Unknown Error occurred" + repr(err) #This error handling was taken from online
-  def open_url(date):
-    """Open up the APOD's url in the user's default browser"""
-    try:
-        params = {"api_key": API_KEY, "date": date, "thumbs": True}
-        response = requests.get(APOD_URL, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            try:
-              return webbrowser.open(data["url"]) #This opens to the image
-            except KeyError:
-               return webbrowser.open("https://apod.nasa.gov/apod/astropix.html") # In the case that there is no image link it opens directly towards the current APOD
-    except NameError:
-       print("Unable to retrive Image URL, likely due to rate limits or the APOD does not exist")
-       pass #Error handling
-  def return_explanation(date):
-     """Specifically return the explanation of the APOD from the given date"""
-     try:
-        params = {"api_key": API_KEY, "date": date} #Taken from the get apod function
-        response = requests.get(APOD_URL, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            return data["explanation"]
-     except NameError:
-       return "Unable to retrieve explanation"
-     except requests.exceptions.HTTPError as errh:
-          return "An Http Error occurred:" + repr(errh)
-     except requests.exceptions.ConnectionError as errc:
-         return "An Error Connecting to the API occurred:" + repr(errc)
-     except requests.exceptions.Timeout as errt:
-         return "A Timeout Error occurred:" + repr(errt)
-     except requests.exceptions.RequestException as err:
-         return "An Unknown Error occurred" + repr(err)
-class Earth:
-     def open_image(lat, lon, dim, date):
-      """Fetch an Earth picture and open it in a GUI window with pywebview."""
-      try:
-        params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-        response = requests.get(EARTH_URL, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            window = webview.create_window(data["date"], data["url"]) #Opens the image url in a GUI with the title of the image
-            webview.start() #Open the GUI
-            return window
-        else:
-            print("Failed to fetch requested image.") #Error handling
-            return None
-      except NameError:
-       pass #Invalid inputs
-     def open_url(lat, lon, dim, date):
-       """Same as APOD's open url but for earth images"""
-       try:
-           params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-           response = requests.get(EARTH_URL, params=params)
-           if response.status_code == 200:
-               data = response.json()
-               return webbrowser.open(data["url"])
-       except NameError:
-          print("Unable to access image URL")
-          pass   
-```
+So far it fills the basic functions set, it can access the current APOD and that of any date and open the image via Pywebview or open it in the default browser. So far it meets the basic functionality requirements I've set although it can certainly be improved upon to make it all located within the initial GUI. It is completely functional for most cases, however there is a severe lack of error handling. I will likely further expand upon the program increasing the possible uses of it as to include other functions of the NASA API and possibly revamping the GUI.
 
 ---
 ---
@@ -719,7 +414,7 @@ class apod:
             except KeyError:
                return webbrowser.open("https://apod.nasa.gov/apod/astropix.html") # In the case that there is no image link it opens directly towards the current APOD
     except NameError:
-       print("Unable to retrive Image URL, likely due to rate limits or the APOD does not exist")
+       raise requests.exceptions.ConnectionError
        pass #Error handling
   def return_explanation(date):
      """Specifically return the explanation of the APOD from the given date"""
@@ -764,7 +459,7 @@ class Earth:
                data = response.json()
                return webbrowser.open(data["url"])
        except NameError:
-          print("Unable to access image URL")
+          raise requests.exceptions.ConnectionError
           pass   
 ```
 
@@ -1292,3 +987,20 @@ pip install pywebview
 
 ---
 ---
+
+### Questions
+
+---
+
+1. The simple way to deal with any issues caused by a change to the API over time, by testing the program every so often it is reasonably possible to figure out what has gone wrong due to these changes and how to fix them. By simply checking the API's website for updates any notable issues can be fixed without much issue, another viable way for long term development would be adding a feedback system to allow for users to report if something is wrong hence allowing me to quickly know what needs to be updated and why.
+2. I severely doubt there will be any drastic changes to any of the modules I use (or python itself) that will cause a major bug in the program, however it is still preferable to use the most recent version of most modules, hence as already seen in the `README.md` I have recommended the user to also manually install the dependencies instead of just installing solely from the `requirements.txt`. Another way that I have mentioned in the prior question is via user feedback, doing so would allow for me to know how the system is bugged and hopefuly allow me to quickly fix it.
+3. I'd immediately try to trigger the bug myself to see the error message. Using the error message I'll be able to figure out where exactly the program is malfunctioning and from there (and with VS code's debugger) I can figure out why it malfunctions and how to fix it and change the code correspondingly.
+4. I will simply use Github commits to explain what exactly has changed (and for what reason) as well as potential changes. Along with the use of code comments and docstrings these should help make the code easier to understand and hence ensure ease of updating in future.
+
+---
+
+### **Final Evaluation**
+
+---
+
+Here we are. I feel as if the program meets all the initial requirements I set up for it, accessing multiple libraries that can be reasonably used without requiring a superior API key. It uses a tkinter GUI as intended and the GUI's buttons meet the rest of the functional requirements I set up to meet. The program has also met all non-functional requirements I initially set up for it (given it isn't ratelimited) hence I believe that the program is fully functional having met all requirements I set it up for. There are many ways the program may be improved, for instance a way to store the APODs within the program (the major reason I didn't do this was that it had already been done) via some kind of image loading software that is compatible with tkinter, in theory it could be improved such that it can use a majority of NASA's services, however that would require an API key with higher rate limits such a thing can only be accessed by contacting NASA and giving a valid reason. Beyond this can also be some miscellaneous features added such as accessing an APOD from a random date (which is actually quite easy) and possibly some kind of feedback system. Assuming in accordance with the waterfall structure it was developed terribly, having the code done before any level of documention, but in the end it has worked well, the documentaton has been completed, the code is functional and effective, there is nothing wrong with the final product but the time management in accordance with the waterfall structure would be terrible everything being completed entirely out of order. Throughout the project many challenges were faced, most notably the school wifi rate limiting everything for quite literally no reason (I would've done more if it weren't for that >:[) which simply made testing and debugging overly difficult for no particular reason. Other challenges include things such as attempting to insert html into tkinter, but the largest issue by far will likely remain the rate limits which cannot be fixed.

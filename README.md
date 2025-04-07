@@ -34,3 +34,10 @@ pip install requests
 pip install pywebview
 
 ```
+
+### Get your own API key
+
+Go to:
+
+[Here](https://api.nasa.gov/) and fill in the form to have an API key sent to you by NASA.
+Then go the `api_module.py` and replace the `API_KEY` variable with your own API key
