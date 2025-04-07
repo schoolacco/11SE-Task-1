@@ -77,10 +77,12 @@ class apod:
         response = requests.get(APOD_URL, params=params)
         if response.status_code == 200:
             data = response.json()
-            urllib.request.urlretrieve(data["image_url"], data["title"])
+            file = urllib.request.urlretrieve(data["url"], data["title"])
             if not os.path.exists("Images"):
                 os.makedirs("Images")
-            file_name = os.path.basename(f"{data["title"]}.png")
+            file_name = os.path.basename(file)
+            destination_path = os.path.join("Images", file_name)
+            shutil.move(file, destination_path)
     except NameError:
       return "Unable to retrieve image"
     except requests.exceptions.HTTPError as errh:

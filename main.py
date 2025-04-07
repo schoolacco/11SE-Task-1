@@ -42,6 +42,7 @@ Label(Apod_frame, text="\n", bg="black", fg="white").pack() #Add space
 Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: display(date_input.get())).pack() #Apod commands
 Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
 Button(Apod_frame, text="Read APOD explanation", bg="black", fg="white", command=lambda: explanation(date_input.get())).pack() # Refer to the respective functions, lambda is required to allow for the functions to require variables and cause them to not run instantly
+Button(Apod_frame, text="Save APOD", bg="black", fg="white", command=lambda: apod.save_APOD(date_input.get())).pack()
 Label(Apod_frame, text="\n", bg="black", fg="white").pack()
 Label(Apod_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack() # An explanation of the nessecary format
 date_input = Entry(Apod_frame, bg="black", fg="white") # Allows for an input within the GUI
