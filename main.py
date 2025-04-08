@@ -2,6 +2,7 @@ from api_module import apod, Earth #Importing from my module
 from tkinter import * # Import everything
 from tkinter import ttk #Specifically import ttk (* doesn't import it)
 from tkinterweb import * # Import everything for better tkinterhtml
+import os #Import the system itself
 def explanation(date):
   """Insert the explanation for the APOD into a textbox"""
   global txt #Tkinter textbox is global
@@ -77,6 +78,7 @@ Label(Earth_frame, text="Do: lon: -95.33, lat: 29.78, date: 2018-01-01, dim: 0.1
 Label(Earth_frame, text="\n", bg="black", fg="white").pack()
 Button(Earth_frame, text="Open Image", bg="black", fg="white", command=lambda: Earth.open_image(lat.get(), lon.get(), dim.get(), date_input2.get())).pack() # Refer to the corresponding functions and the buttons in the APOD section for explanation
 Button(Earth_frame, text="Open the Image url", bg="black", fg="white", command=lambda: Earth.open_url(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
+Button(Earth_frame, text="Save Image", bg="black", fg="white", command=lambda: Earth.save_Image(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
 Label(Earth_frame, text="\n", bg="black", fg="white").pack()
 Label(Earth_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack() # Format
 date_input2 = Entry(Earth_frame, bg="black", fg="white") #Same as APOD section
@@ -100,6 +102,73 @@ canvas2.pack()
 canvas2.create_image( 0, 0, image = bg2, anchor="nw")  # Add image
 Earth_frame.pack(fill='both', expand=True)
 notebook.add(Earth_frame, text="Earth Imagery") # Add the frame to the notebook
+Management = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
+Values = Variable(value= os.listdir("Images"))
+List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE)
+v_scrollbar = ttk.Scrollbar(
+    root,
+    orient=VERTICAL,
+    command=List.yview
+)
+
+List['yscrollcommand'] = v_scrollbar.set
+v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
+h_scrollbar = ttk.Scrollbar(
+    root,
+    orient=HORIZONTAL,
+    command=List.xview
+)
+List['xscrollcommand'] = h_scrollbar.set
+h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
+List.pack()
+def Delete():
+  global Values
+  global List
+  for item in [List.get(i) for i in List.curselection()]:
+    os.remove(f"Images/{item}")
+  List.destroy()
+  Values = Variable(value= os.listdir("Images"))
+  List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE)
+  v_scrollbar = ttk.Scrollbar(
+    root,
+    orient=VERTICAL,
+    command=List.yview
+  )
+  
+  List['yscrollcommand'] = v_scrollbar.set
+  v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
+  h_scrollbar = ttk.Scrollbar(
+      root,
+      orient=HORIZONTAL,
+      command=List.xview
+  )
+  List['xscrollcommand'] = h_scrollbar.set
+  h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
+  List.pack()
+def Refresh():
+  global Values, List
+  List.destroy()
+  Values = Variable(value= os.listdir("Images"))
+  List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE)
+  v_scrollbar = ttk.Scrollbar(
+    root,
+    orient=VERTICAL,
+    command=List.yview
+  )
+  
+  List['yscrollcommand'] = v_scrollbar.set
+  v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
+  h_scrollbar = ttk.Scrollbar(
+      root,
+      orient=HORIZONTAL,
+      command=List.xview
+  )
+  List['xscrollcommand'] = h_scrollbar.set
+  h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
+  List.pack()
+Button(Management, text="Delete selected files", bg="black", fg="white", command=lambda: Delete()).pack()
+Button(Management, text="Refresh List", bg="black", fg="white", command=lambda: Refresh()).pack()
+notebook.add(Management, text="Storage Management")
 '''-----Help-----'''
 Help = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
 Message(Help, text="Are you confused by all of this? It honestly isn't too hard to understand. Enter in the date input within the APOD frame in the given format to recieve the APOD of that given date, do not that you may run into some issues, these likely relate to the APOD being a video instead of an image or you simply being rate limited. If you want today's APOD just leave it blank. The Open Image buttons in either frame will simply open up the image within the GUI,  the open the image URL buttons will open the image within your default browser. The APOD explanation button with the APOD frame will simply insert the explanation (given by NASA) of the APOD of the date you chose. In the Earth frame the latitude and longtitude entry points are as you'd expect them to be, latitude and longtitude of the Earth image, the dimensions parameter is rather unclear but doesn't matter too much. If you run into any issues first ensure that you have gone through the README and make sure you aren't just rate limited, otherwise, report the issue.", bg="black", fg="white").pack() # A warning

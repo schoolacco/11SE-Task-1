@@ -3,7 +3,6 @@ import webbrowser
 import webview
 import urllib.request
 import os
-import shutil
 # NASA API Base URL
 APOD_URL = "https://api.nasa.gov/planetary/apod"
 EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
@@ -77,12 +76,12 @@ class apod:
         response = requests.get(APOD_URL, params=params)
         if response.status_code == 200:
             data = response.json()
-            file = urllib.request.urlretrieve(data["url"], data["title"])
             if not os.path.exists("Images"):
                 os.makedirs("Images")
-            file_name = os.path.basename(file)
-            destination_path = os.path.join("Images", file_name)
-            shutil.move(file, destination_path)
+            if not os.path.exists(f"Images/{data["title"]}.png"):
+              urllib.request.urlretrieve(data["url"], f"Images/{data["title"]}.png")
+            else:
+               print("Image already exists")
     except NameError:
       return "Unable to retrieve image"
     except requests.exceptions.HTTPError as errh:
@@ -118,3 +117,28 @@ class Earth:
                return webbrowser.open(data["url"])
        except NameError:
           pass
+     def save_Image(lat,lon,dim,date):
+       try:
+           params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
+           response = requests.get(EARTH_URL, params=params)
+           if response.status_code == 200:
+               data = response.json()
+               if not os.path.exists("Images"):
+                   os.makedirs("Images")
+               n = 0
+               if not os.path.exists("Images/Earth_Image.png"):
+                 urllib.request.urlretrieve(data["url"], "Images/Earth_Image.png")
+               while os.path.exists(f"Images/Earth_image{n}.png"):
+                 n+=1
+                 if os.path.exists(f"Images/Earth_image{n}.png"):
+                   urllib.request.urlretrieve(data["url"], f"Images/Earth_Image{n}.png")
+       except NameError:
+         return "Unable to retrieve image"
+       except requests.exceptions.HTTPError as errh:
+            return "An Http Error occurred:" + repr(errh)
+       except requests.exceptions.ConnectionError as errc:
+           return "An Error Connecting to the API occurred:" + repr(errc)
+       except requests.exceptions.Timeout as errt:
+           return "A Timeout Error occurred:" + repr(errt)
+       except requests.exceptions.RequestException as err:
+           return "An Unknown Error occurred" + repr(err)
