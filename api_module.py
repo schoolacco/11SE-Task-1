@@ -71,6 +71,7 @@ class apod:
      except requests.exceptions.RequestException as err:
          return "An Unknown Error occurred" + repr(err)
   def save_APOD(date):
+    '''Saves the APOD permanently via files'''
     try:
         params = {"api_key": API_KEY, "date": date} #Taken from the get apod function
         response = requests.get(APOD_URL, params=params)
