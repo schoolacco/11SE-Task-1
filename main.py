@@ -102,14 +102,14 @@ canvas2.pack()
 canvas2.create_image( 0, 0, image = bg2, anchor="nw")  # Add image
 Earth_frame.pack(fill='both', expand=True)
 notebook.add(Earth_frame, text="Earth Imagery") # Add the frame to the notebook
-Management = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
-Values = Variable(value= os.listdir("Images"))
-List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE)
+Management = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame') # File management frame
+Values = Variable(value= os.listdir("Images")) # Creates a list of files
+List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE) # Creates a selectable list within the GUI
 v_scrollbar = ttk.Scrollbar(
     root,
     orient=VERTICAL,
     command=List.yview
-)
+) # Adds a scrollbar
 
 List['yscrollcommand'] = v_scrollbar.set
 v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
@@ -124,11 +124,11 @@ List.pack()
 def Delete():
   global Values
   global List
-  for item in [List.get(i) for i in List.curselection()]:
-    os.remove(f"Images/{item}")
-  List.destroy()
+  for item in [List.get(i) for i in List.curselection()]: #For every selected item
+    os.remove(f"Images/{item}") #Delete the file
+  List.destroy() #Destroy the list to update it
   Values = Variable(value= os.listdir("Images"))
-  List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE)
+  List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE) # Remake the list
   v_scrollbar = ttk.Scrollbar(
     root,
     orient=VERTICAL,
@@ -149,7 +149,7 @@ def Refresh():
   global Values, List
   List.destroy()
   Values = Variable(value= os.listdir("Images"))
-  List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE)
+  List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE) #Destroy the list to update it
   v_scrollbar = ttk.Scrollbar(
     root,
     orient=VERTICAL,
@@ -166,7 +166,7 @@ def Refresh():
   List['xscrollcommand'] = h_scrollbar.set
   h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
   List.pack()
-Button(Management, text="Delete selected files", bg="black", fg="white", command=lambda: Delete()).pack()
+Button(Management, text="Delete selected files", bg="black", fg="white", command=lambda: Delete()).pack() #Button to delete files nad refresh respectively.
 Button(Management, text="Refresh List", bg="black", fg="white", command=lambda: Refresh()).pack()
 notebook.add(Management, text="Storage Management")
 '''-----Help-----'''

@@ -76,12 +76,12 @@ class apod:
         response = requests.get(APOD_URL, params=params)
         if response.status_code == 200:
             data = response.json()
-            if not os.path.exists("Images"):
-                os.makedirs("Images")
-            if not os.path.exists(f"Images/{data["title"]}.png"):
-              urllib.request.urlretrieve(data["url"], f"Images/{data["title"]}.png")
+            if not os.path.exists("Images"): #If the directory does not exist
+                os.makedirs("Images") #Create the directroy
+            if not os.path.exists(f"Images/{data["title"]}.png"): #If the directory does not exist
+              urllib.request.urlretrieve(data["url"], f"Images/{data["title"]}.png") #Grab the image from the site and store it
             else:
-               print("Image already exists")
+               print("Image already exists") #Error handling
     except NameError:
       return "Unable to retrieve image"
     except requests.exceptions.HTTPError as errh:
@@ -119,7 +119,7 @@ class Earth:
           pass
      def save_Image(lat,lon,dim,date):
        try:
-           params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
+           params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date} #Refer to the save_APOD function
            response = requests.get(EARTH_URL, params=params)
            if response.status_code == 200:
                data = response.json()
