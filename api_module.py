@@ -79,8 +79,9 @@ class apod:
             data = response.json()
             if not os.path.exists("Images"): #If the directory does not exist
                 os.makedirs("Images") #Create the directroy
-            if not os.path.exists(f"Images/{data["title"]}.png"): #If the directory does not exist
-              urllib.request.urlretrieve(data["url"], f"Images/{data["title"]}.png") #Grab the image from the site and store it
+            path = "Images/"+data["title"]+".png"
+            if not os.path.exists(path): #If the directory does not exist
+              urllib.request.urlretrieve(data["url"], path) #Grab the image from the site and store it
             else:
                print("Image already exists") #Error handling
     except NameError:
