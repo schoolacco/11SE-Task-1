@@ -229,6 +229,7 @@ Postconditions: Image is in HTMLframe and open in User's default browser.
 ### Structure Chart
 
 ![Structure chart](Structure.png)
+Sorry for lack of quality :( the program crashed whenever I tried to export it.
 
 ### Flowcharts
 
@@ -256,8 +257,17 @@ BEGIN main()
    IF Button(Explanation) pressed THEN
      explanation(date)
    ENDIF
-   IF tab is switched THEN
+   IF Button_Save pressed THEN
+     Save_APOD(date)
+   ENDIF
+   IF Button_Quit pressed THEN
+     root,.destrory() /// Ends the program
+   IF tab is switched to Earth THEN
      tab = Earth
+   ELSEIF tab is switched to Help THEN
+     tab = Help
+   ELSEIF tab is switched to Storage Management THEN
+     tab = Management
    ENDIF
   ENDWHILE
   WHILE tab = Earth THEN
@@ -266,11 +276,45 @@ BEGIN main()
     INPUT dimensions
     INPUT date
     IF Button(Open Image) pressed THEN
-      open_image(date)
-    IF Button(Open URL) pressed THEN
-      open_url(date)
-    IF tab is switched THEN
+      open_image(latitude, longitude, dimensions, date)
+    ELSEIF Button(Open URL) pressed THEN
+      open_url(latitude, longitude, dimensions, date)
+    ELSEIF Button_Save_Image pressed THEN
+      save_image(latitude, longitude, dimensions, date)
+    ENDIF
+    IF tab is switched to APOD THEN
       tab = APOD
+   ELSEIF tab is switched to Help THEN
+     tab = Help
+   ELSEIF tab is switched to Storage Management THEN
+     tab = Management
+   ENDIF
+  ENDWHILE
+  WHILE tab = Help THEN
+   DISPLAY Are you confused by all of this? It honestly isn't too hard to understand. Enter in the date input within the APOD frame in the given format to recieve the APOD of that given date, do not that you may run into some issues, these likely relate to the APOD being a video instead of an image or you simply being rate limited. If you want today's APOD just leave it blank. The Open Image buttons in either frame will simply open up the image within the GUI,  the open the image URL buttons will open the image within your default browser. The APOD explanation button with the APOD frame will simply insert the explanation (given by NASA) of the APOD of the date you chose. In the Earth frame the latitude and longtitude entry points are as you'd expect them to be, latitude and longtitude of the Earth image, the dimensions parameter is rather unclear but doesn't matter too much. If you run into any issues first ensure that you have gone through the README and make sure you aren't just rate limited, otherwise, report the issue.
+   IF tab is switched to APOD THEN
+     tab = APOD
+   ELSEIF tab is switched to Earth THEN
+     tab = Earth
+   ELSEIF tab is switched to Storage Management THEN
+     tab = Management
+   ENDIF
+  ENDWHILE
+ WHILE tab = Management
+   DISPLAY List
+   INPUT Selections
+   IF Delete_Button is pressed THEN
+     Delete()
+   ELSEIF Refresh_Button is pressed THEN
+     Refresh()
+   ENDIF
+   IF tab is switched to APOD THEN
+     tab = APOD
+   ELSEIF tab is switched to Earth THEN
+     tab = Earth
+   ELSEIF tab is switched to Help THEN
+     tab = Help
+   ENDIF
   ENDWHILE
 END main()
 
@@ -375,266 +419,17 @@ As seen in the above screenshots the API has successfully been integrated into t
 
 Simply copied the NASA APOD example code into main.py for future use. It worked as expected considering it was yet to have any function. The code most simply be changed such that it actually functions as a module and such that it has unique functions beyond those given by default. Next is to move the code into the api_module.py file and to actually add original functions to it.
 
-```Python
-import requests
- 
- # NASA API Base URL
- APOD_URL = "https://api.nasa.gov/planetary/apod"
- API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"  # Replace with your own API key from https://api.nasa.gov/
- 
- # Dictionary to store favorite celestial objects
- favorites = {}
- 
- def get_apod():
-     """Fetch NASA's Astronomy Picture of the Day (APOD)."""
-     params = {"api_key": API_KEY}
-     response = requests.get(APOD_URL, params=params)
-     if response.status_code == 200:
-         data = response.json()
-         return {
-             "title": data["title"],
-             "date": data["date"],
-             "explanation": data["explanation"],
-             "image_url": data["url"]
-         }
-     else:
-         print("Failed to fetch APOD.")
-         return None
- 
- def add_favorite(name, details):
-     """Store a celestial object in the favorites collection."""
-     favorites[name] = details
- dict = get_apod()
- add_favorite(dict["title"], dict["image_url"])
- print(favorites)
-```
-
 ### 10/03/25
 
 Complete revamped the code, moving the API related functions into the API module and created a simple tkinter GUI in main.py with buttons that trigger said functions. I even added an entry box to allow for the accessing of prior APODs. All changes worked as expected, any invalid inputs are simply passed and pywebview successfully displays the html image within a GUI. webbrowser module also successfully opens the image URL. The next step is to likely add more functions for other parts of the APOD module of NASA's API and possibly access other modules of the API as well.
-
-```Python
-'''main.py (these docstrings have been inserted to indicate which python file this is, they do not exist in the program)'''
- from api_module import apod
- from tkinter import *
- root = Tk()
- root.title('APOD GUI')
- root.configure(bg='black')
- root.maxsize(1000,1000)
- root.minsize(100,100)
- root.geometry("300x300+120+50")
- Label(root, text="Welcome to this system", bg="black", fg="white").pack()
- Button(root, text="Open Image", bg="black", fg="white", command=lambda: apod.open_image(date_input.get())).pack()
- Button(root, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
- Label(root, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
- date_input = Entry(root, bg="black", fg="white")
- date_input.pack()
- Button(root, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
- root.mainloop()
-
-'''api_module.py'''
- import requests
- import webbrowser
- import webview
- # NASA API Base URL
- APOD_URL = "https://api.nasa.gov/planetary/apod"
- API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
- # Dictionary to store favorite celestial objects
- favorites = {}
- class apod:
-   #running = False
-   def get_apod():
-       """Fetch NASA's Astronomy Picture of the Day (APOD)."""
-       params = {"api_key": API_KEY}
-       response = requests.get(APOD_URL, params=params)
-       if response.status_code == 200:
-           data = response.json()
-           return {
-               "title": data["title"],
-               "date": data["date"],
-               "explanation": data["explanation"],
-               "image_url": data["url"]
-           }
-       else:
-           print("Failed to fetch APOD.")
-           return None
-   def add_favorite(name, details):
-       """Store a celestial object in the favorites collection."""
-       favorites[name] = details
-   def open_image(date):
-     try:
-         params = {"api_key": API_KEY, "date": date} #The parameters of the APOD, including the API key and the date retrived
-         response = requests.get(APOD_URL, params=params) #Retriving from the APi
-         if response.status_code == 200: #Checking if everything is working as intended
-             data = response.json() #Converts data to json
-             window = webview.create_window(data["title"], data["url"]) #Opens the image url in a GUI with the title of the image
-             webview.start() #Open the GUI
-             return window
-     except NameError:
-        pass #For invalid inputs
-   def open_url(date):
-     try:
-         params = {"api_key": API_KEY, "date": date}
-         response = requests.get(APOD_URL, params=params)
-         if response.status_code == 200:
-             data = response.json()
-             return webbrowser.open(data["url"])
-     except NameError:
-        pass
-```
 
 ### 11/03/25
 
 Nothing much has changed except for resizing the GUI and adding a canvas with an image in it. It has functioned exactly as intended with the image being visible in the GUI hence increasing aesthetics. Next is to work on adding other NASA API modules into the program.
 
-```Python
- root = Tk()
- root.title('APOD GUI')
- root.configure(bg='black')
- root.maxsize(2000,2000)
- root.minsize(400,400)
- root.geometry("400x400+120+50")
- Label(root, text="Welcome to this system", bg="black", fg="white").pack()
- Label(root, text="\n", bg="black", fg="white").pack()
- Button(root, text="Open Image", bg="black", fg="white", command=lambda: apod.open_image(date_input.get())).pack()
- Button(root, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
- Label(root, text="\n", bg="black", fg="white").pack()
- Label(root, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
- date_input = Entry(root, bg="black", fg="white")
- date_input.pack()
- Label(root, text="\n", bg="black", fg="white").pack()
- Button(root, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
- Label(root, text="\n", bg="black", fg="white").pack()
- bg = PhotoImage(file="stars.png") 
- canvas = Canvas(root, width=500, height=500)
- canvas.pack()
- canvas.create_image( 0, 0, image = bg,  
-                      anchor = "nw") 
- root.mainloop()
-```
-
 ### 17/03/25
 
 I have now converted the GUI into a tab-based system via the use of ttk, this allows me to seperate each of the NASA functions used, I have also added support for NASA earth images service, it is currently in a placeholder state and is not functional. It over all works about as intended however the Earth module will needed to be updated to function. From here I can finish off the Earth module and possibly experiment with even more NASA modules and improve upon the existing functions.
-
-```Python
-'''api_module.py'''
-import webview
- # NASA API Base URL
- APOD_URL = "https://api.nasa.gov/planetary/apod"
- EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
- API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
- # Dictionary to store favorite celestial objects
- favorites = {}
- class apod:
-   #running = False
-   def get_apod():
-       """Fetch NASA's Astronomy Picture of the Day (APOD)."""
-       params = {"api_key": API_KEY}
-       response = requests.get(APOD_URL, params=params)
-       if response.status_code == 200:
-           data = response.json()
-           return {
-               "title": data["title"],
-               "date": data["date"],
-               "explanation": data["explanation"],
-               "image_url": data["url"]
-           }
-       else:
-           print("Failed to fetch APOD.")
-           return None
- def open_image(date):
-     try:
-         params = {"api_key": API_KEY, "date": date} #The parameters of the APOD, including the API key and the date retrived
-         response = requests.get(APOD_URL, params=params) #Retriving from the APi
-         if response.status_code == 200: #Checking if everything is working as intended
-             data = response.json() #Converts data to json
-             window = webview.create_window(data["title"], data["url"]) #Opens the image url in a GUI with the title of the image
-             webview.start() #Open the GUI
-             return window
-     except NameError:
-        pass #For invalid inputs
-   def open_url(date):
-     try:
-         params = {"api_key": API_KEY, "date": date}
-         response = requests.get(APOD_URL, params=params)
-         if response.status_code == 200:
-             data = response.json()
-             return webbrowser.open(data["url"])
-     except NameError:
-        pass
- class Earth:
-      def get_image(lat, lon, dim, date):
-       """Fetch an Earth pciture."""
-       try:
-         params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-         response = requests.get(EARTH_URL, params=params)
-         if response.status_code == 200:
-             data = response.json()
-             window = webview.create_window(date["date"], data["url"]) #Opens the image url in a GUI with the title of the image
-             webview.start() #Open the GUI
-             return window
-         else:
-             print("Failed to fetch requested image.")
-             return None
-       except NameError:
-        pass
-'''main.py'''
- from api_module import apod
- from tkinter import *
- from tkinter import ttk
- from api_module import Earth
- root = Tk()
- root.title('APOD GUI')
- root.configure(bg='black')
- root.maxsize(500,800)
- root.minsize(500,800)
- notebook = ttk.Notebook(root)
- s = ttk.Style()
- s.configure('Apod_frame.TFrame', background="black")
- Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
- Label(Apod_frame, text="Welcome to this system", bg="black", fg="white").pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: apod.open_image(date_input.get())).pack()
- Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- Label(Apod_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
- date_input = Entry(Apod_frame, bg="black", fg="white")
- date_input.pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- Button(Apod_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- bg = PhotoImage(file="stars.png") 
- canvas = Canvas(Apod_frame, width=500, height=500)
- canvas.pack()
- canvas.create_image( 0, 0, image = bg,  
-                      anchor = "nw") 
- Apod_frame.pack(fill='both', expand=True)
- notebook.add(Apod_frame, text="APOD")
- # ------------ EARTH IMAGES ----------------
- s.configure('Earth_Frame.TFrame', background="black")
- Earth_frame = ttk.Frame(notebook, width=2000, height=2000, style='Earth_frame.TFrame')
- Label(Earth_frame, text="Welcome to this system", bg="black", fg="white").pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Button(Earth_frame, text="Open Image", bg="black", fg="white", command=lambda: Earth.open_image(date_input2.get())).pack()
- Button(Earth_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input2.get())).pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Label(Earth_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
- date_input2 = Entry(Earth_frame, bg="black", fg="white")
- date_input2.pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Button(Earth_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- bg = PhotoImage(file="stars.png") 
- canvas2 = Canvas(Earth_frame, width=500, height=500)
- canvas2.pack()
- canvas2.create_image( 0, 0, image = bg,  
-                      anchor = "nw") 
- Earth_frame.pack(fill='both', expand=True)
- notebook.add(Earth_frame, text="Earth Imagery")
- notebook.pack(expand=True)
- root.mainloop()
-```
 
 ### 18/03/25
 
@@ -643,162 +438,6 @@ Made a small aesthetic change in Earth tab. Nothing worth evaluating.
 ### 19/03/25
 
 Finished off the Earth module allowing for access to NASA's earth images, however it is incredibly buggy due to the API itself being incredibly limited, this is an issue that cannot be fixed, added another URL to the api_module only to realise that I cannot use it due to rate limits, it will likely be deleted soon, finally updated the get apod function and added a function to return the explanation. Corresponding added "message" in GUI to contain APOD explanation. Everything seems to function as intended but currently the explanation message exists within it's own GUI, this will likely be changed with time. From here I intend finding a way to insert the explanation into the GUI, and possibly insert the html image into the GUI as well.
-
-```Python
-'''api_module.py'''
- import webbrowser
- import webview
- # NASA API Base URL
- APOD_URL = "https://api.nasa.gov/planetary/apod"
- EARTH_URL = "https://api.nasa.gov/planetary/earth/assets"
- ROVER_URL = "https://api.nasa.gov/neo/rest/v1"
- API_KEY = "WEIouyu7zWA7RuTEsuAJPVYTcaKeNyhIGr6Fn6bV"
- # Dictionary to store favorite celestial objects
- favorites = {}
- class apod:
-   #running = False
-   def get_apod():
-   def get_apod(date):
-       """Fetch NASA's Astronomy Picture of the Day (APOD)."""
-       params = {"api_key": API_KEY, "date": date}
-       response = requests.get(APOD_URL, params=params)
-       if response.status_code == 200:
-           data = response.json()
-           return {
-               "title": data["title"],
-               "date": data["date"],
-               "explanation": data["explanation"],
-               "image_url": data["url"]
-           }
-       else:
-           print("Failed to fetch APOD.")
-           return None
-   def open_image(date):
-     try:
-         params = {"api_key": API_KEY, "date": date} #The parameters of the APOD, including the API key and the date retrived
-         response = requests.get(APOD_URL, params=params) #Retriving from the APi
-         if response.status_code == 200: #Checking if everything is working as intended
-             data = response.json() #Converts data to json
-             window = webview.create_window(data["title"], data["url"]) #Opens the image url in a GUI with the title of the image
-             webview.start() #Open the GUI
-             return window
-     except NameError:
-        pass #For invalid inputs
-   def open_url(date):
-     try:
-         params = {"api_key": API_KEY, "date": date}
-         response = requests.get(APOD_URL, params=params)
-         if response.status_code == 200:
-             data = response.json()
-             return webbrowser.open(data["url"])
-     except NameError:
-        print("Unable to retrive Image URL")
-        pass
-   def return_explanation(date):
-      try:
-         params = {"api_key": API_KEY, "date": date}
-         response = requests.get(APOD_URL, params=params)
-         if response.status_code == 200:
-             data = response.json()
-             return data["explanation"]
-      except NameError:
-        return "Unable to retrieve explanation"
- class Earth:
-      def open_image(lat, lon, dim, date):
-       """Fetch an Earth picture."""
-       try:
-         params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-         response = requests.get(EARTH_URL, params=params)
-         if response.status_code == 200:
-             data = response.json()
-             window = webview.create_window(data["date"], data["url"]) #Opens the image url in a GUI with the title of the image
-             webview.start() #Open the GUI
-             return window
-         else:
-             print("Failed to fetch requested image.")
-             return None
-       except NameError:
-        pass
-      def open_url(lat, lon, dim, date):
-        try:
-            params = {"api_key": API_KEY, "lat": lat, "lon": lon, "dim": dim, "date": date}
-            response = requests.get(EARTH_URL, params=params)
-            if response.status_code == 200:
-                data = response.json()
-                return webbrowser.open(data["url"])
-        except NameError:
-           print("Unable to access image URL")
-           pass   
-'''main.py'''
- from tkinter import *
- from tkinter import ttk
- from api_module import Earth
- def explanation(date):
-     root = Tk()
-     root.title(apod.get_apod(date)["title"])
-     root.configure(bg="black")
-     root.minsize(200,200)
-     Message(root, text=apod.return_explanation(date), bg="black", fg="white").pack()
- root = Tk()
- root.title('NASA API')
- root.configure(bg='black')
- root.maxsize(1000,1000)
- root.minsize(1000,1000)
- notebook = ttk.Notebook(root)
- s = ttk.Style()
- s.configure('Apod_frame.TFrame', background="black")
- Apod_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
- Label(Apod_frame, text="Welcome to this system", bg="black", fg="white").pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- Button(Apod_frame, text="Open Image", bg="black", fg="white", command=lambda: apod.open_image(date_input.get())).pack()
- Button(Apod_frame, text="Open the APOD url", bg="black", fg="white", command=lambda: apod.open_url(date_input.get())).pack()
- Button(Apod_frame, text="Read APOD explanation", bg="black", fg="white", command=lambda: explanation(date_input.get())).pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- Label(Apod_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
- date_input = Entry(Apod_frame, bg="black", fg="white")
- date_input.pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- Button(Apod_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
- Label(Apod_frame, text="\n", bg="black", fg="white").pack()
- bg = PhotoImage(file="stars.png") 
- canvas = Canvas(Apod_frame, width=800, height=800)
- canvas.pack()
- canvas.create_image( 0, 0, image = bg,  
-                      anchor = "nw") 
- Apod_frame.pack(fill='both', expand=True)
- notebook.add(Apod_frame, text="APOD")
- # ------------ EARTH IMAGES ----------------
- Earth_frame = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
- Label(Earth_frame, text="WARNING: THERE IS AN INCREDIBLY HIGH CHANCE THIS WILL FAIL AS THE API IS VERY LIMITED IN THIS REGARD", bg="black", fg="crimson").pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Button(Earth_frame, text="Open Image", bg="black", fg="white", command=lambda: Earth.open_image(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
- Button(Earth_frame, text="Open the Image url", bg="black", fg="white", command=lambda: Earth.open_url(lat.get(), lon.get(), dim.get(), date_input2.get())).pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Label(Earth_frame, text="Date input (YYYY-MM-DD)", bg="black", fg="white").pack()
- date_input2 = Entry(Earth_frame, bg="black", fg="white")
- date_input2.pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Label(Earth_frame, text="Enter in the latitude of the image", bg="black", fg="white").pack()
- lat = Entry(Earth_frame, bg="black", fg="white")
- lat.pack()
- Label(Earth_frame, text="Enter in the longtitude of the image", bg="black", fg="white").pack()
- lon = Entry(Earth_frame, bg="black", fg="white")
- lon.pack()
- Label(Earth_frame, text="Enter in the dimensions of the image (only one number)", bg="black", fg="white").pack()
- dim = Entry(Earth_frame, bg="black", fg="white")
- dim.pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- Button(Earth_frame, text="Quit :(", fg='white', bg="dark blue", command=lambda: root.destroy()).pack()
- Label(Earth_frame, text="\n", bg="black", fg="white").pack()
- bg2 = PhotoImage(file="Earth.png") 
- canvas2 = Canvas(Earth_frame, width=750, height=750)
- canvas2.pack()
- canvas2.create_image( 0, 0, image = bg2, anchor="nw") 
- 
- Earth_frame.pack(fill='both', expand=True)
- notebook.add(Earth_frame, text="Earth Imagery")
- notebook.pack(expand=True)
-```
 
 ### 21/03/25
 

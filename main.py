@@ -105,23 +105,8 @@ notebook.add(Earth_frame, text="Earth Imagery") # Add the frame to the notebook
 Management = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame') # File management frame
 Values = Variable(value= os.listdir("Images")) # Creates a list of files
 List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE) # Creates a selectable list within the GUI
-v_scrollbar = ttk.Scrollbar(
-    root,
-    orient=VERTICAL,
-    command=List.yview
-) # Adds a scrollbar
-
-List['yscrollcommand'] = v_scrollbar.set
-v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
-h_scrollbar = ttk.Scrollbar(
-    root,
-    orient=HORIZONTAL,
-    command=List.xview
-)
-List['xscrollcommand'] = h_scrollbar.set
-h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
-List.pack()
 def Delete():
+  '''Delete the selected items from the list'''
   global Values
   global List
   for item in [List.get(i) for i in List.curselection()]: #For every selected item
@@ -129,45 +114,17 @@ def Delete():
   List.destroy() #Destroy the list to update it
   Values = Variable(value= os.listdir("Images"))
   List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE) # Remake the list
-  v_scrollbar = ttk.Scrollbar(
-    root,
-    orient=VERTICAL,
-    command=List.yview
-  )
-  
-  List['yscrollcommand'] = v_scrollbar.set
-  v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
-  h_scrollbar = ttk.Scrollbar(
-      root,
-      orient=HORIZONTAL,
-      command=List.xview
-  )
-  List['xscrollcommand'] = h_scrollbar.set
-  h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
   List.pack()
 def Refresh():
+  '''Refresh the list incase you have new files'''
   global Values, List
   List.destroy()
   Values = Variable(value= os.listdir("Images"))
   List = Listbox(master=Management, listvariable=Values, selectmode=MULTIPLE) #Destroy the list to update it
-  v_scrollbar = ttk.Scrollbar(
-    root,
-    orient=VERTICAL,
-    command=List.yview
-  )
-  
-  List['yscrollcommand'] = v_scrollbar.set
-  v_scrollbar.pack(pady=10, side=RIGHT, fill=Y)
-  h_scrollbar = ttk.Scrollbar(
-      root,
-      orient=HORIZONTAL,
-      command=List.xview
-  )
-  List['xscrollcommand'] = h_scrollbar.set
-  h_scrollbar.pack(padx=10, side=BOTTOM, fill=X)
   List.pack()
 Button(Management, text="Delete selected files", bg="black", fg="white", command=lambda: Delete()).pack() #Button to delete files nad refresh respectively.
 Button(Management, text="Refresh List", bg="black", fg="white", command=lambda: Refresh()).pack()
+List.pack()
 notebook.add(Management, text="Storage Management")
 '''-----Help-----'''
 Help = ttk.Frame(notebook, width=2000, height=2000, style='Apod_frame.TFrame')
